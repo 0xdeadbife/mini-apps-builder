@@ -1,0 +1,578 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Mini App Template</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f6f7f3;
+      --surface: #ffffff;
+      --surface-2: #eef1ec;
+      --text: #18201d;
+      --muted: #65716b;
+      --line: #d9dfd7;
+      --accent: #266ef1;
+      --accent-2: #16875d;
+      --danger: #b42318;
+      --warning: #a15c07;
+      --radius: 8px;
+      --shadow: 0 10px 30px rgba(24, 32, 29, 0.08);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    [data-theme="dark"] {
+      color-scheme: dark;
+      --bg: #101412;
+      --surface: #171d1a;
+      --surface-2: #202823;
+      --text: #edf2ef;
+      --muted: #9ba8a1;
+      --line: #2d3731;
+      --accent: #75a7ff;
+      --accent-2: #5fd29f;
+      --danger: #ff8a80;
+      --warning: #ffd166;
+      --shadow: 0 10px 30px rgba(0, 0, 0, 0.22);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    button,
+    input,
+    textarea,
+    select {
+      font: inherit;
+    }
+
+    button {
+      min-height: 40px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--surface);
+      color: var(--text);
+      padding: 0 12px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      border-color: color-mix(in srgb, var(--accent), var(--line) 50%);
+    }
+
+    button.primary {
+      border-color: var(--accent);
+      background: var(--accent);
+      color: #ffffff;
+    }
+
+    button.danger {
+      border-color: color-mix(in srgb, var(--danger), var(--line) 30%);
+      color: var(--danger);
+    }
+
+    input,
+    textarea,
+    select {
+      width: 100%;
+      min-height: 40px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--surface);
+      color: var(--text);
+      padding: 8px 10px;
+    }
+
+    label {
+      display: grid;
+      gap: 6px;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 650;
+    }
+
+    .app-shell {
+      width: min(1180px, calc(100% - 24px));
+      margin: 0 auto;
+      padding: 18px 0 28px;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+
+    .title-block {
+      min-width: 0;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(24px, 3vw, 34px);
+      letter-spacing: 0;
+    }
+
+    .subtitle {
+      margin: 4px 0 0;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .actions,
+    .toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .workspace {
+      display: grid;
+      grid-template-columns: 360px 1fr;
+      gap: 14px;
+      align-items: start;
+    }
+
+    .panel {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--surface);
+      box-shadow: var(--shadow);
+      padding: 14px;
+    }
+
+    .panel h2 {
+      margin: 0 0 12px;
+      font-size: 16px;
+      letter-spacing: 0;
+    }
+
+    .form-grid {
+      display: grid;
+      gap: 10px;
+    }
+
+    .status {
+      min-height: 22px;
+      margin-top: 10px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .status.error {
+      color: var(--danger);
+    }
+
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .metric {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--surface-2);
+      padding: 10px;
+    }
+
+    .metric span {
+      display: block;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+
+    .metric strong {
+      display: block;
+      margin-top: 4px;
+      font-size: 24px;
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 620px;
+    }
+
+    th,
+    td {
+      border-bottom: 1px solid var(--line);
+      padding: 10px;
+      text-align: left;
+      vertical-align: top;
+      font-size: 14px;
+    }
+
+    th {
+      background: var(--surface-2);
+      color: var(--muted);
+      font-size: 12px;
+      text-transform: uppercase;
+    }
+
+    tr:last-child td {
+      border-bottom: 0;
+    }
+
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      min-height: 24px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 0 8px;
+      background: var(--surface-2);
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .empty {
+      border: 1px dashed var(--line);
+      border-radius: var(--radius);
+      padding: 22px;
+      color: var(--muted);
+      text-align: center;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    @media (max-width: 860px) {
+      .topbar {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .workspace {
+        grid-template-columns: 1fr;
+      }
+
+      .summary-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="app-shell" data-theme="light">
+    <header class="topbar">
+      <div class="title-block">
+        <h1>Mini App Template</h1>
+        <p class="subtitle">Single-file, client-side, import/export ready.</p>
+      </div>
+      <div class="actions">
+        <button type="button" id="themeToggle">Dark mode</button>
+        <button type="button" id="importButton">Import JSON</button>
+        <button type="button" id="exportButton">Export JSON</button>
+        <button type="button" class="danger" id="resetButton">Reset</button>
+        <input class="hidden" id="importFile" type="file" accept="application/json,.json">
+      </div>
+    </header>
+
+    <section class="workspace">
+      <aside class="panel">
+        <h2>New item</h2>
+        <form class="form-grid" id="itemForm">
+          <label>
+            Name
+            <input id="nameInput" required maxlength="80" placeholder="Example task">
+          </label>
+          <label>
+            Category
+            <input id="categoryInput" maxlength="40" placeholder="Planning">
+          </label>
+          <label>
+            Notes
+            <textarea id="notesInput" rows="4" placeholder="Useful detail, constraint or next action"></textarea>
+          </label>
+          <button class="primary" type="submit">Add item</button>
+        </form>
+        <p class="status" id="statusLine"></p>
+      </aside>
+
+      <section class="panel">
+        <div class="summary-grid">
+          <div class="metric">
+            <span>Total</span>
+            <strong id="totalMetric">0</strong>
+          </div>
+          <div class="metric">
+            <span>Done</span>
+            <strong id="doneMetric">0</strong>
+          </div>
+          <div class="metric">
+            <span>Open</span>
+            <strong id="openMetric">0</strong>
+          </div>
+        </div>
+
+        <div class="toolbar" style="margin-bottom: 10px;">
+          <label style="flex: 1 1 240px;">
+            Search
+            <input id="searchInput" placeholder="Filter by name, category or notes">
+          </label>
+          <label style="width: 180px;">
+            Status
+            <select id="statusFilter">
+              <option value="all">All</option>
+              <option value="open">Open</option>
+              <option value="done">Done</option>
+            </select>
+          </label>
+        </div>
+
+        <div id="emptyState" class="empty hidden">No items match the current filters.</div>
+        <div class="table-wrap" id="tableWrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Category</th>
+                <th>Notes</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="itemsBody"></tbody>
+          </table>
+        </div>
+      </section>
+    </section>
+  </main>
+
+  <script>
+    const STORAGE_KEY = "mini-app-template:v1";
+
+    const sampleState = {
+      theme: "light",
+      items: [
+        {
+          id: crypto.randomUUID(),
+          name: "Define the app promise",
+          category: "Product",
+          notes: "Write the one sentence job this mini app solves.",
+          done: false
+        },
+        {
+          id: crypto.randomUUID(),
+          name: "Add import/export",
+          category: "Data",
+          notes: "Keep backups portable with JSON.",
+          done: true
+        }
+      ]
+    };
+
+    let state = loadState(sampleState);
+
+    const shell = document.querySelector(".app-shell");
+    const form = document.querySelector("#itemForm");
+    const statusLine = document.querySelector("#statusLine");
+    const importFile = document.querySelector("#importFile");
+    const searchInput = document.querySelector("#searchInput");
+    const statusFilter = document.querySelector("#statusFilter");
+    const itemsBody = document.querySelector("#itemsBody");
+    const tableWrap = document.querySelector("#tableWrap");
+    const emptyState = document.querySelector("#emptyState");
+
+    function loadState(fallback) {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        return raw ? JSON.parse(raw) : structuredClone(fallback);
+      } catch {
+        return structuredClone(fallback);
+      }
+    }
+
+    function saveState() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    }
+
+    function setStatus(message, type = "info") {
+      statusLine.textContent = message;
+      statusLine.classList.toggle("error", type === "error");
+    }
+
+    function escapeHtml(value) {
+      return String(value)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    function filteredItems() {
+      const query = searchInput.value.trim().toLowerCase();
+      const filter = statusFilter.value;
+      return state.items.filter((item) => {
+        const haystack = `${item.name} ${item.category} ${item.notes}`.toLowerCase();
+        const matchesQuery = !query || haystack.includes(query);
+        const matchesStatus = filter === "all" || (filter === "done") === item.done;
+        return matchesQuery && matchesStatus;
+      });
+    }
+
+    function render() {
+      shell.dataset.theme = state.theme;
+      document.querySelector("#themeToggle").textContent = state.theme === "dark" ? "Light mode" : "Dark mode";
+
+      const total = state.items.length;
+      const done = state.items.filter((item) => item.done).length;
+      document.querySelector("#totalMetric").textContent = total;
+      document.querySelector("#doneMetric").textContent = done;
+      document.querySelector("#openMetric").textContent = total - done;
+
+      const rows = filteredItems();
+      emptyState.classList.toggle("hidden", rows.length > 0);
+      tableWrap.classList.toggle("hidden", rows.length === 0);
+
+      itemsBody.innerHTML = rows.map((item) => `
+        <tr>
+          <td><strong>${escapeHtml(item.name)}</strong></td>
+          <td>${escapeHtml(item.category || "General")}</td>
+          <td>${escapeHtml(item.notes || "")}</td>
+          <td><span class="chip">${item.done ? "Done" : "Open"}</span></td>
+          <td>
+            <button type="button" data-action="toggle" data-id="${escapeHtml(item.id)}">${item.done ? "Reopen" : "Done"}</button>
+            <button type="button" class="danger" data-action="delete" data-id="${escapeHtml(item.id)}">Delete</button>
+          </td>
+        </tr>
+      `).join("");
+    }
+
+    function downloadJson(filename, data) {
+      const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = filename;
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    form.addEventListener("submit", (event) => {
+      event.preventDefault();
+      const name = document.querySelector("#nameInput").value.trim();
+      if (!name) {
+        setStatus("Add a name before saving.", "error");
+        return;
+      }
+
+      state.items.unshift({
+        id: crypto.randomUUID(),
+        name,
+        category: document.querySelector("#categoryInput").value.trim(),
+        notes: document.querySelector("#notesInput").value.trim(),
+        done: false
+      });
+
+      form.reset();
+      saveState();
+      render();
+      setStatus("Item added.");
+    });
+
+    itemsBody.addEventListener("click", (event) => {
+      const button = event.target.closest("button");
+      if (!button) return;
+
+      const item = state.items.find((entry) => entry.id === button.dataset.id);
+      if (!item) return;
+
+      if (button.dataset.action === "toggle") {
+        item.done = !item.done;
+        setStatus(item.done ? "Marked as done." : "Reopened.");
+      }
+
+      if (button.dataset.action === "delete") {
+        if (!confirm(`Delete "${item.name}"?`)) return;
+        state.items = state.items.filter((entry) => entry.id !== item.id);
+        setStatus("Item deleted.");
+      }
+
+      saveState();
+      render();
+    });
+
+    document.querySelector("#themeToggle").addEventListener("click", () => {
+      state.theme = state.theme === "dark" ? "light" : "dark";
+      saveState();
+      render();
+    });
+
+    document.querySelector("#exportButton").addEventListener("click", () => {
+      downloadJson("mini-app-backup.json", state);
+      setStatus("Backup exported.");
+    });
+
+    document.querySelector("#importButton").addEventListener("click", () => {
+      importFile.click();
+    });
+
+    importFile.addEventListener("change", async () => {
+      const file = importFile.files[0];
+      if (!file) return;
+
+      try {
+        const imported = JSON.parse(await file.text());
+        if (!Array.isArray(imported.items)) {
+          throw new Error("Invalid backup format.");
+        }
+        state = {
+          theme: imported.theme === "dark" ? "dark" : "light",
+          items: imported.items.map((item) => ({
+            id: item.id || crypto.randomUUID(),
+            name: String(item.name || "Untitled"),
+            category: String(item.category || ""),
+            notes: String(item.notes || ""),
+            done: Boolean(item.done)
+          }))
+        };
+        saveState();
+        render();
+        setStatus("Backup imported.");
+      } catch (error) {
+        setStatus(error.message || "Could not import that file.", "error");
+      } finally {
+        importFile.value = "";
+      }
+    });
+
+    document.querySelector("#resetButton").addEventListener("click", () => {
+      if (!confirm("Reset all local data to sample data?")) return;
+      state = structuredClone(sampleState);
+      saveState();
+      render();
+      setStatus("Sample data restored.");
+    });
+
+    searchInput.addEventListener("input", render);
+    statusFilter.addEventListener("change", render);
+
+    render();
+  </script>
+</body>
+</html>

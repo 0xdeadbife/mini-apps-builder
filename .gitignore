@@ -1,0 +1,36 @@
+# Local generated mini apps
+apps/*
+!apps/.gitkeep
+!apps/README.md
+
+# Local data, exports and triage artifacts
+data/*
+!data/.gitkeep
+!data/README.md
+
+# Secrets and local environment
+.env
+.env.*
+*.local
+
+# Dependencies and build/cache output
+node_modules/
+dist/
+build/
+.cache/
+.parcel-cache/
+.vite/
+
+# Tooling logs and temporary files
+*.log
+tmp/
+temp/
+.tmp/
+
+# OS/editor noise
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+.idea/
+.vscode/

@@ -1,0 +1,243 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>JSON Dashboard</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+  <style>
+    :root {
+      --bg: #f4f6f8;
+      --surface: #ffffff;
+      --surface-2: #edf1f5;
+      --text: #17202a;
+      --muted: #64748b;
+      --line: #d8e0e8;
+      --accent: #2251cc;
+      --danger: #b42318;
+      --radius: 8px;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+    body { margin: 0; background: var(--bg); color: var(--text); }
+    button, textarea, input, select { font: inherit; }
+    button {
+      min-height: 40px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--surface);
+      color: var(--text);
+      padding: 0 12px;
+      cursor: pointer;
+    }
+    button.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+    textarea, input, select {
+      width: 100%;
+      min-height: 40px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--surface);
+      color: var(--text);
+      padding: 8px 10px;
+    }
+    label { display: grid; gap: 6px; color: var(--muted); font-size: 13px; font-weight: 700; }
+    main { width: min(1180px, calc(100% - 24px)); margin: 0 auto; padding: 18px 0 28px; }
+    header { display: flex; justify-content: space-between; gap: 12px; align-items: flex-start; margin-bottom: 16px; }
+    h1 { margin: 0; font-size: clamp(24px, 3vw, 34px); letter-spacing: 0; }
+    p { color: var(--muted); }
+    .actions, .toolbar { display: flex; flex-wrap: wrap; gap: 8px; }
+    .grid { display: grid; grid-template-columns: 360px 1fr; gap: 14px; align-items: start; }
+    .panel {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--surface);
+      padding: 14px;
+      box-shadow: 0 12px 28px rgba(23, 32, 42, 0.08);
+    }
+    .metrics { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; margin-bottom: 12px; }
+    .metric { border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface-2); padding: 10px; }
+    .metric span { color: var(--muted); font-size: 12px; font-weight: 800; text-transform: uppercase; }
+    .metric strong { display: block; margin-top: 4px; font-size: 24px; }
+    .chart-box { height: 280px; margin-bottom: 12px; }
+    .table-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: var(--radius); }
+    table { width: 100%; min-width: 640px; border-collapse: collapse; }
+    th, td { border-bottom: 1px solid var(--line); padding: 9px; text-align: left; font-size: 14px; }
+    th { background: var(--surface-2); color: var(--muted); font-size: 12px; text-transform: uppercase; }
+    tr:last-child td { border-bottom: 0; }
+    .status { min-height: 22px; color: var(--muted); font-size: 13px; }
+    @media (max-width: 860px) {
+      header { flex-direction: column; }
+      .grid { grid-template-columns: 1fr; }
+      .metrics { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <header>
+      <div>
+        <h1>JSON Dashboard</h1>
+        <p>Pega un array JSON y obtene metricas, tabla y grafico local.</p>
+      </div>
+      <div class="actions">
+        <button id="sampleButton">Sample</button>
+        <button id="exportButton">Export JSON</button>
+      </div>
+    </header>
+
+    <section class="grid">
+      <aside class="panel">
+        <label>JSON array
+          <textarea id="jsonInput" rows="16"></textarea>
+        </label>
+        <div class="toolbar" style="margin-top: 10px;">
+          <button class="primary" id="parseButton">Parse</button>
+          <button id="clearButton">Clear</button>
+        </div>
+        <p class="status" id="statusLine"></p>
+      </aside>
+
+      <section class="panel">
+        <div class="toolbar" style="margin-bottom: 10px;">
+          <label style="width: 220px;">Group by <select id="groupField"></select></label>
+          <label style="flex: 1 1 220px;">Search <input id="searchInput" placeholder="Filter rows"></label>
+        </div>
+        <div class="metrics">
+          <div class="metric"><span>Rows</span><strong id="rowsMetric">0</strong></div>
+          <div class="metric"><span>Fields</span><strong id="fieldsMetric">0</strong></div>
+          <div class="metric"><span>Groups</span><strong id="groupsMetric">0</strong></div>
+        </div>
+        <div class="chart-box"><canvas id="chart"></canvas></div>
+        <div class="table-wrap"><table><thead id="tableHead"></thead><tbody id="tableBody"></tbody></table></div>
+      </section>
+    </section>
+  </main>
+
+  <script>
+    const STORAGE_KEY = "json-dashboard:v1";
+    const sampleRows = [
+      { channel: "Email", owner: "Ana", status: "Won", amount: 1200 },
+      { channel: "Search", owner: "Leo", status: "Open", amount: 700 },
+      { channel: "Email", owner: "Mora", status: "Lost", amount: 300 },
+      { channel: "Referral", owner: "Ana", status: "Won", amount: 1600 },
+      { channel: "Search", owner: "Leo", status: "Open", amount: 900 }
+    ];
+    let rows = loadRows();
+    let chart;
+
+    const jsonInput = document.querySelector("#jsonInput");
+    const groupField = document.querySelector("#groupField");
+    const searchInput = document.querySelector("#searchInput");
+    const statusLine = document.querySelector("#statusLine");
+
+    function loadRows() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        return raw ? JSON.parse(raw) : sampleRows;
+      } catch {
+        return sampleRows;
+      }
+    }
+
+    function saveRows() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(rows));
+    }
+
+    function fields() {
+      return Array.from(new Set(rows.flatMap((row) => Object.keys(row))));
+    }
+
+    function filteredRows() {
+      const query = searchInput.value.trim().toLowerCase();
+      if (!query) return rows;
+      return rows.filter((row) => JSON.stringify(row).toLowerCase().includes(query));
+    }
+
+    function escapeHtml(value) {
+      return String(value).replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;").replaceAll("'", "&#039;");
+    }
+
+    function render() {
+      jsonInput.value = JSON.stringify(rows, null, 2);
+      const cols = fields();
+      if (!cols.includes(groupField.value)) groupField.value = cols[0] || "";
+      groupField.innerHTML = cols.map((field) => `<option ${field === groupField.value ? "selected" : ""}>${escapeHtml(field)}</option>`).join("");
+
+      const visible = filteredRows();
+      const group = groupField.value;
+      const counts = new Map();
+      visible.forEach((row) => counts.set(String(row[group] ?? "Empty"), (counts.get(String(row[group] ?? "Empty")) || 0) + 1));
+
+      document.querySelector("#rowsMetric").textContent = visible.length;
+      document.querySelector("#fieldsMetric").textContent = cols.length;
+      document.querySelector("#groupsMetric").textContent = counts.size;
+
+      document.querySelector("#tableHead").innerHTML = `<tr>${cols.map((col) => `<th>${escapeHtml(col)}</th>`).join("")}</tr>`;
+      document.querySelector("#tableBody").innerHTML = visible.map((row) => `
+        <tr>${cols.map((col) => `<td>${escapeHtml(row[col] ?? "")}</td>`).join("")}</tr>
+      `).join("");
+
+      renderChart(counts);
+    }
+
+    function renderChart(counts) {
+      const labels = Array.from(counts.keys());
+      const data = Array.from(counts.values());
+      if (chart) chart.destroy();
+      chart = new Chart(document.querySelector("#chart"), {
+        type: "bar",
+        data: {
+          labels,
+          datasets: [{ label: "Rows", data, backgroundColor: "#2251cc" }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { display: false } },
+          scales: { y: { beginAtZero: true, ticks: { precision: 0 } } }
+        }
+      });
+    }
+
+    function downloadJson(filename, data) {
+      const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = filename;
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    document.querySelector("#parseButton").addEventListener("click", () => {
+      try {
+        const parsed = JSON.parse(jsonInput.value);
+        if (!Array.isArray(parsed)) throw new Error("El JSON debe ser un array.");
+        rows = parsed.filter((row) => row && typeof row === "object" && !Array.isArray(row));
+        saveRows();
+        statusLine.textContent = "JSON parseado.";
+        render();
+      } catch (error) {
+        statusLine.textContent = error.message || "JSON invalido.";
+      }
+    });
+
+    document.querySelector("#sampleButton").addEventListener("click", () => {
+      rows = structuredClone(sampleRows);
+      saveRows();
+      render();
+    });
+    document.querySelector("#clearButton").addEventListener("click", () => {
+      rows = [];
+      saveRows();
+      render();
+    });
+    document.querySelector("#exportButton").addEventListener("click", () => downloadJson("dashboard-data.json", rows));
+    groupField.addEventListener("change", render);
+    searchInput.addEventListener("input", render);
+
+    render();
+  </script>
+</body>
+</html>
