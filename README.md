@@ -1,21 +1,25 @@
 # Mini Apps Builder
 
-Meta-workspace para crear mini apps client-side en un unico archivo HTML.
+A small meta-workspace for designing and generating polished, single-file vanilla HTML mini apps.
 
-La idea: pedir una herramienta concreta, recibir un `.html` completo y abrirlo directo en el navegador. Sin backend, sin build step obligatorio, sin levantar servidor. Ideal para calculadoras, dashboards, recetas, parsers, scrapers client-side, herramientas de aprendizaje, reportes locales y utilidades pasajeras pero bien hechas.
+The goal is simple: describe a useful local tool, generate one complete `.html` file, open it in a browser, and use it without a backend, build step, or server. This repo is meant for temporary-but-serious utilities: calculators, dashboards, cheatsheets, local data viewers, parsers, learning tools, planners, small workbenches, and client-side reports.
 
-## Filosofia
+## What This Is
 
-- **Single-file first:** la salida principal es un `.html` autocontenido.
-- **Client-side only:** HTML, CSS y JavaScript vanilla.
-- **Sin servidor:** la app debe poder abrirse con doble click.
-- **Herramienta real:** la primera pantalla es la experiencia usable, no una landing page.
-- **Datos portables:** JSON import/export como backup universal.
-- **Persistencia local:** `localStorage`, `IndexedDB` o SQLite/WASM cuando aplique.
-- **CDNs permitidos:** librerias modernas por CDN si agregan valor claro.
-- **Estetica consistente:** cada app debe sentirse pulida, organizada y lista para usar.
+This is not a framework. It is a working system of prompts, standards, visual themes, and starter templates for producing self-contained browser apps.
 
-## Estructura
+Each generated app should feel like a real tool, not a demo:
+
+- one complete `.html` output;
+- vanilla HTML, CSS, and JavaScript;
+- no required server;
+- no required build pipeline;
+- local persistence when useful;
+- import/export when useful;
+- modern UI, but restrained and purposeful;
+- readable code that can be edited later.
+
+## Repository Layout
 
 ```txt
 mini-apps-builder/
@@ -24,110 +28,149 @@ mini-apps-builder/
   README.md
   apps/
     README.md
-  prompts/
-    app-request-template.md
   data/
     README.md
-  templates/
-    single-file-app.html
+  examples/
+    json-dashboard.html
+    recipe-scaler.html
+  prompts/
+    app-request-template.md
   standards/
     app-checklist.md
     aesthetic-packs.md
     data-patterns.md
     design-system.md
     output-contract.md
-  examples/
-    recipe-scaler.html
-    json-dashboard.html
+    themes/
+      tokyo-mono.css
+  templates/
+    single-file-app.html
 ```
 
-## Uso Con Codex
+## Core Files
 
-En otra PC:
+- `AGENTS.md` tells Codex how to behave inside this repo.
+- `meta-system-prompt.md` is the main generation contract.
+- `templates/single-file-app.html` is the reusable baseline.
+- `standards/` contains product, data, UI, output, and theme rules.
+- `examples/` contains sanitized reference apps.
+- `prompts/app-request-template.md` is a structured request template.
+
+## Local Outputs
+
+Generated apps and imported data are local by default:
+
+- `apps/` is for generated user-specific HTML apps.
+- `data/` is for local CSV/JSON imports, exports, and analysis artifacts.
+
+Both directories are ignored by git except for their README and `.gitkeep` files. This is intentional: generated apps often contain private logic, embedded datasets, screenshots, or one-off work.
+
+If a generated app becomes a clean public example, move a sanitized copy to `examples/`.
+
+## Using With Codex
+
+Clone the repo:
 
 ```bash
 git clone <repo-url> mini-apps-builder
 cd mini-apps-builder
 ```
 
-Despues, en Codex, pedi algo como:
+Then ask Codex for a concrete tool:
 
 ```txt
-Lee AGENTS.md y meta-system-prompt.md.
-Quiero una mini app single-file en apps/ para analizar un CSV de gastos.
-Debe tener filtros, graficos, import/export JSON y estetica Ledger Sharp.
+Read AGENTS.md and meta-system-prompt.md.
+Build a single-file mini app in apps/ for analyzing a local CSV.
+Use Tokyo Mono. Include filters, import/export JSON, and a clean mobile layout.
 ```
 
-Codex deberia:
+Codex should:
 
-- leer `AGENTS.md`;
-- usar `meta-system-prompt.md` como contrato principal;
-- consultar `standards/`;
-- generar la app final dentro de `apps/`;
-- dejar datos locales en `data/`.
+- read `AGENTS.md`;
+- use `meta-system-prompt.md` as the main contract;
+- follow `standards/`;
+- create the app inside `apps/`;
+- keep local datasets and exports inside `data/`;
+- avoid committing local/private outputs.
 
-`apps/` y `data/` estan ignorados por git para evitar subir cosas privadas o generadas.
+## Manual Prompt Flow
 
-## Uso Manual
-
-1. Abrir `meta-system-prompt.md`.
-2. Pegar ese prompt como instruccion base cuando se pida una mini app.
-3. Agregar el pedido concreto:
+Use `meta-system-prompt.md` as the base instruction, then add a specific request:
 
 ```txt
-Quiero una mini app para planificar recetas semanales.
-Debe importar/exportar JSON, generar lista de compras, escalar porciones y permitir marcar favoritos.
+I want a single-file mini app for planning weekly meals.
+It should scale recipes, generate a shopping list, persist locally, and export JSON.
+Use Notebook Warm.
 ```
 
-4. La respuesta esperada debe ser un unico archivo HTML.
+The expected output is one complete `.html` file.
 
-Las mini apps finales van en `apps/`. Los archivos de `examples/` son solo referencias de estilo y estructura.
+## Visual Themes
 
-## Esteticas
+Themes live in `standards/aesthetic-packs.md`. Tokenized CSS can live in `standards/themes/`.
 
-Las esteticas viven en `standards/aesthetic-packs.md`.
+Current packs:
 
-- `Workbench Calm`: default utilitario, claro y sobrio.
-- `Studio Glass`: mas visual, para generadores creativos.
-- `Ledger Sharp`: compacto y tabular, ideal para dashboards.
-- `Notebook Warm`: editorial, bueno para recetas y aprendizaje.
-- `Tokyo Mono`: B/W, monocromatico, serio, sleek, ideal para runbooks y herramientas tecnicas.
-- `Graphite Hacker`: oscuro, monocromatico, monospace, graphite/charcoal con naranja calido.
+- `Workbench Calm`: practical, light, quiet, general-purpose.
+- `Studio Glass`: more visual and expressive for creative tools.
+- `Ledger Sharp`: compact and tabular for dashboards and calculators.
+- `Notebook Warm`: editorial and comfortable for recipes, learning, and writing.
+- `Tokyo Mono`: monochrome, serious, sleek, ideal for runbooks and technical tools.
+- `Graphite Hacker`: darker graphite/charcoal, monospace-heavy, warmer technical feel.
 
-## Tipos de apps ideales
+## Design Bias
 
-- Recetas, listas, planificadores y generadores.
-- Calculadoras y simuladores.
-- Dashboards de CSV/JSON.
-- Extractores desde texto, HTML pegado o archivos locales.
-- Herramientas de aprendizaje, flashcards y quizzes.
-- Inventarios, trackers, checklists y mini CRMs personales.
+Generated apps should open directly into the useful workspace.
 
-## Limites asumidos
+Prefer:
 
-- Sin backend no hay secretos seguros en cliente.
-- Scraping remoto puede fallar por CORS; preferir pegar HTML, subir archivos o usar fuentes con CORS habilitado.
-- Para datasets grandes usar IndexedDB, SQL.js o DuckDB-WASM en vez de guardar todo en `localStorage`.
+- dense but readable layouts;
+- clear controls;
+- compact toolbars;
+- useful empty states;
+- careful mobile behavior;
+- code blocks and tables only where they help;
+- restrained visual language;
+- export/import flows for portability.
 
-## Publicar En GitHub
+Avoid:
 
-El repo esta pensado para publicar solo la fabrica, no los outputs locales.
+- marketing landing pages;
+- decorative dashboards with no workflow;
+- oversized hero sections;
+- noisy color palettes;
+- fake feature text;
+- private data in tracked files.
 
-Antes de pushear:
+## Data Patterns
+
+Use the lightest storage that fits:
+
+- `localStorage` for small state and preferences;
+- `IndexedDB` for larger local datasets;
+- JSON import/export for backups;
+- CSV/Markdown/PDF/image exports when useful;
+- SQLite/WASM only when the app really benefits from queries.
+
+Remote scraping is limited by browser CORS. Prefer pasted HTML, uploaded files, local CSV/JSON, or CORS-friendly public endpoints.
+
+## Publishing
+
+This repo is meant to publish the builder, not local outputs.
+
+Before pushing:
 
 ```bash
-git status --short
+git status --short --ignored
+```
+
+Make sure private files under `apps/` and `data/` are still ignored.
+
+Then:
+
+```bash
 git add .
-git status --short
-```
-
-Chequea que no aparezcan archivos privados de `apps/` o `data/`.
-
-Luego:
-
-```bash
-git commit -m "Initial mini apps builder workspace"
-git branch -M main
+git commit -m "Update mini apps builder workspace"
 git remote add origin <repo-url>
 git push -u origin main
 ```
