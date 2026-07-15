@@ -1,0 +1,118 @@
+:root {
+  color-scheme: dark;
+  --bg: #08090a;
+  --surface: #0f1012;
+  --surface-2: #151619;
+  --surface-3: #1c1e22;
+  --text: #f1f2f0;
+  --text-soft: #c9cbc8;
+  --muted: #8f928d;
+  --faint: #5f635f;
+  --line: #25282c;
+  --line-strong: #363a40;
+  --active: #e7e8e4;
+  --active-contrast: #08090a;
+  --success: #a8b2a3;
+  --warning: #b8aa8a;
+  --danger: #b59a96;
+  --radius: 6px;
+  --shadow: none;
+  --font-ui: Inter, "IBM Plex Sans", Geist, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-code: "JetBrains Mono", "IBM Plex Mono", "SFMono-Regular", Consolas, monospace;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-ui);
+}
+
+code,
+pre,
+kbd,
+samp,
+.mono,
+.code,
+.metric-value,
+.data-cell {
+  font-family: var(--font-code);
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+
+button {
+  min-height: 38px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface-2);
+  color: var(--text-soft);
+  padding: 0 12px;
+}
+
+button:hover {
+  border-color: var(--line-strong);
+  color: var(--text);
+  background: var(--surface-3);
+}
+
+button.primary {
+  border-color: var(--active);
+  background: var(--active);
+  color: var(--active-contrast);
+}
+
+input,
+textarea,
+select {
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface);
+  color: var(--text);
+  padding: 9px 10px;
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+  border-color: var(--line-strong);
+  outline: 2px solid rgba(241, 242, 240, 0.08);
+}
+
+.panel,
+.card {
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface);
+  box-shadow: var(--shadow);
+}
+
+.chip {
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--muted);
+}
+
+.chip.active {
+  border-color: var(--active);
+  background: var(--active);
+  color: var(--active-contrast);
+}
+
+pre {
+  overflow: auto;
+  margin: 0;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: #0a0b0c;
+  color: var(--text-soft);
+  padding: 12px;
+  font-size: 13px;
+  line-height: 1.58;
+  white-space: pre-wrap;
+}

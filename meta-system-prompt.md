@@ -87,6 +87,7 @@ Si el usuario pide una estetica especifica, seguirla. Si no, usar `Workbench Cal
 - Studio Glass: mas visual, superficies translucidas leves, buena para generadores creativos.
 - Ledger Sharp: compacta, tabular, ideal para dashboards, finanzas y calculadoras.
 - Notebook Warm: editorial sobria, buena para aprendizaje, recetas y escritura.
+- Tokyo Mono: B/W, monocromatica, seria, sans legible con monospace para codigo/datos, ideal para runbooks, cheatsheets e internal tools.
 - Graphite Hacker: monocromatica oscura, graphite/charcoal, naranja calido, monospace, neo-retro-tech sleek, buena para parsers, scrapers, dashboards tecnicos y herramientas dev.
 
 ## Reglas de arquitectura

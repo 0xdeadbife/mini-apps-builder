@@ -91,6 +91,7 @@ Las esteticas viven en `standards/aesthetic-packs.md`.
 - `Studio Glass`: mas visual, para generadores creativos.
 - `Ledger Sharp`: compacto y tabular, ideal para dashboards.
 - `Notebook Warm`: editorial, bueno para recetas y aprendizaje.
+- `Tokyo Mono`: B/W, monocromatico, serio, sleek, ideal para runbooks y herramientas tecnicas.
 - `Graphite Hacker`: oscuro, monocromatico, monospace, graphite/charcoal con naranja calido.
 
 ## Tipos de apps ideales

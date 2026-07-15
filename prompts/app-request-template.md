@@ -26,7 +26,7 @@ Features esperadas:
 -
 
 Estetica:
-- Workbench Calm / Studio Glass / Ledger Sharp / Notebook Warm / Graphite Hacker
+- Workbench Calm / Studio Glass / Ledger Sharp / Notebook Warm / Tokyo Mono / Graphite Hacker
 
 Restricciones:
 - Debe ser un unico HTML.

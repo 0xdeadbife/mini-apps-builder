@@ -33,6 +33,7 @@ Available packs:
 - `Studio Glass`
 - `Ledger Sharp`
 - `Notebook Warm`
+- `Tokyo Mono`
 - `Graphite Hacker`
 
 ## Safety
